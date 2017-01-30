@@ -61,10 +61,7 @@
         return availablePositions.indexOf(getComputedStyle(element).position) > -1;
       },
       getClosestPositionedParent(element) {
-        if (!element) {
-          return false;
-        }
-        const parent = element.parentNode;
+        const parent = element ? element.parentNode : undefined;
 
         if (!parent || parent.tagName.toLowerCase() === 'body') {
           return false;
@@ -149,12 +146,16 @@
       },
       init() {
         this.rippleElement = this.$el;
-        this.parentElement = this.getClosestPositionedParent(this.$el.parentNode);
+        if (!this.parentElement) {
+          this.parentElement = this.getClosestPositionedParent(this.$el.parentNode);
+        }
 
         if (!this.parentElement) {
           this.$destroy();
         } else {
-          this.rippleElement.parentNode.removeChild(this.rippleElement);
+          if (this.rippleElement.parentNode) {
+            this.rippleElement.parentNode.removeChild(this.rippleElement);
+          }
           this.parentElement.appendChild(this.rippleElement);
           this.registerMouseEvent();
           this.setDimensions();
